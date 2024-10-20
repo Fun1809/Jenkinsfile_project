@@ -1,49 +1,47 @@
-pipeline{
-  // need to add agents
-  agent any
+pipeline {
+    // Define the agent
+    agent any
 
-  tools{
-    // here mymaven is tool configured under global tool configuration
-    // new tools added
-    maven 'mymaven'
-}
-
-stages{
-
-  stage('Clone repo')
-
-{
-  steps{
-    git 'https://github.com/github-simplilearn-net/MavenBuild.git'
-  }
-  }
-  stage('Compile Code')
-  {
-    steps{
-      
-      sh 'mvn compile'
+    // Define the tools required
+    tools {
+        // "mymaven" should be configured under Global Tool Configuration in Jenkins
+        maven 'mymaven'
     }
-  }
 
-      stage('Test Code')
-  {
+    stages {
+        stage('Clone repo') {
+            steps {
+                // Clone the repository
+                git 'https://github.com/github-simplilearn-net/MavenBuild.git'
+            }
+        }
 
-    steps{
-      
-      sh 'mvn test'
-    }
-    post{
-      success{
-        junit 'target/surefire-reports/*.xml'
-      }
-    }
-  }
-    stage('Package Code')
-    {
-      steps{
+        stage('Compile Code') {
+            steps {
+                // Run Maven compile
+                sh 'mvn compile'
+            }
+        }
 
-        sh 'mvn package'
-      }
+        stage('Test Code') {
+            steps {
+                // Run Maven tests
+                sh 'mvn test'
+            }
+
+            post {
+                success {
+                    // Publish JUnit test results
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
+
+        stage('Package Code') {
+            steps {
+                // Package the code
+                sh 'mvn package'
+            }
+        }
     }
-  }
 }
